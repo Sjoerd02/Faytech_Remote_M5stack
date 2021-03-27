@@ -5,6 +5,10 @@
 #include <WebServer.h>
 #include <Preferences.h>
 
+/*
+* Multi slider:
+*/
+
 const IPAddress apIP(192, 168, 4, 1);
 const char* apSSID = "M5STACK_SETUP";
 boolean settingMode;
