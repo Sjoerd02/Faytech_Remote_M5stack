@@ -147,18 +147,28 @@ String index_html(){
   s+="</head>";
   s+="";
   s+="<body>";
-  s+="    <h2>FayTech Remote</h2>";
-  s+="    <p><span id=\"textSliderValue\">%SLIDERVALUE%</span></p>";
-  s+="    <p><input type=\"range\" onchange=\"updateSliderPWM(this)\" id=\"pwmSlider\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="    <h2>Faytech 11.6</h2>";
+  s+="    <p><span id=\"textSliderValue\"> %SLIDERVALUE%</span></p>";
+  s+="    <p>Brightness<input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
   s+="            step=\"1\" class=\"slider\"></p>";
-  s+="";
+  s+="    <p>Volume<input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="            step=\"1\" class=\"slider\"></p>";s+="";
   s+="    <script>";
-  s+="        function updateSliderPWM(element) {";
-  s+="            var sliderValue = document.getElementById(\"pwmSlider\").value;";
-  s+="            document.getElementById(\"textSliderValue\").innerHTML = sliderValue;";
-  s+="            console.log(sliderValue);";
+  s+="        function updateSliderBr(element) {";
+  s+="            var sliderValueBr = document.getElementById(\"sliderBr\").value;";
+  s+="            document.getElementById(\"textSliderValue\").innerHTML = sliderValueBr;";
+  s+="            console.log(\"Brightness = \" + sliderValueBr);";
   s+="            var xhr = new XMLHttpRequest();";
-  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValue, true);";
+  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValue + \"&param=bright\", true);";
+  s+="            xhr.send();";
+  s+="        }";
+
+  s+="        function updateSliderVol(element) {";
+  s+="            var sliderValueVol = document.getElementById(\"sliderVol\").value;";
+  s+="            document.getElementById(\"textSliderValue\").innerHTML = sliderValueVol;";
+  s+="            console.log(\"Volume = \" + sliderValueVol);";
+  s+="            var xhr = new XMLHttpRequest();";
+  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
   s+="            xhr.send();";
   s+="        }";
   s+="    </script>";
@@ -272,9 +282,14 @@ void startWebServer() {
       {
         inputMessage = urlDecode(webServer.arg("value"));
         sliderValue = inputMessage;
-        byte message[] = {0x69, 0xA3, sliderValue.toInt()};
-        Serial.write(message, sizeof(message));
-
+        //analogWrite(output, sliderValue.toInt());
+        if (webServer.arg("param")=="bright"){
+          byte message[] = {0x69, 0xA3, sliderValue.toInt()};
+          Serial.write(message, sizeof(message));
+        }else if(webServer.arg("param")=="volume"){
+          byte message[] = {0x69, 0xB2, sliderValue.toInt()};
+          Serial.write(message, sizeof(message));
+        }
       }
       else
       {
