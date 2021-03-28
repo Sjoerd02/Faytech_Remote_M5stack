@@ -32,6 +32,7 @@ boolean newData = false;
 //--------------------
 const int output = 2;
 String sliderValue = "0";
+String param="";
 const char *PARAM_INPUT = "value";
 
 
@@ -147,8 +148,8 @@ String index_html(){
   s+="</head>";
   s+="";
   s+="<body>";
-  s+="    <h2>Faytech 11.6</h2>";
-  s+="    <p><span id=\"textSliderValue\"> %SLIDERVALUE%</span></p>";
+  s+="    <h2>FayTech Remote</h2>";
+  s+="    <p><span id=\"textSliderValue\">%SLIDERVALUE%</span></p>";
   s+="    <p>Brightness<input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
   s+="            step=\"1\" class=\"slider\"></p>";
   s+="    <p>Volume<input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
@@ -156,16 +157,16 @@ String index_html(){
   s+="    <script>";
   s+="        function updateSliderBr(element) {";
   s+="            var sliderValueBr = document.getElementById(\"sliderBr\").value;";
-  s+="            document.getElementById(\"textSliderValue\").innerHTML = sliderValueBr;";
+  s+="            document.getElementById(\"textSliderValue\").innerHTML = \"Brightness = \" +sliderValueBr;";
   s+="            console.log(\"Brightness = \" + sliderValueBr);";
   s+="            var xhr = new XMLHttpRequest();";
-  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValue + \"&param=bright\", true);";
+  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueBr + \"&param=bright\", true);";
   s+="            xhr.send();";
   s+="        }";
 
   s+="        function updateSliderVol(element) {";
   s+="            var sliderValueVol = document.getElementById(\"sliderVol\").value;";
-  s+="            document.getElementById(\"textSliderValue\").innerHTML = sliderValueVol;";
+  s+="            document.getElementById(\"textSliderValue\").innerHTML = \"Volume = \" + sliderValueVol;";
   s+="            console.log(\"Volume = \" + sliderValueVol);";
   s+="            var xhr = new XMLHttpRequest();";
   s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
@@ -281,6 +282,7 @@ void startWebServer() {
       if  (webServer.arg("value") != NULL)
       {
         inputMessage = urlDecode(webServer.arg("value"));
+        param = urlDecode(webServer.arg("param"));
         sliderValue = inputMessage;
         //analogWrite(output, sliderValue.toInt());
         if (webServer.arg("param")=="bright"){
@@ -371,7 +373,6 @@ void showNewData() {
         newData = false;
     }
 }
-
 
 // the setup routine runs once when M5Stack starts up
 void setup(){
