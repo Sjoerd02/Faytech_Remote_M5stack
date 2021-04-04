@@ -150,10 +150,16 @@ String index_html(){
   s+="<body>";
   s+="    <h2>FayTech Remote</h2>";
   s+="    <p><span id=\"textSliderValue\">%SLIDERVALUE%</span></p>";
-  s+="    <p>Brightness<input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="    <label for=\"sliderBr\">Brightness: </label>";
+  s+="    <p><input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
   s+="            step=\"1\" class=\"slider\"></p>";
-  s+="    <p>Volume<input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
-  s+="            step=\"1\" class=\"slider\"></p>";s+="";
+  s+="    <label for=\"sliderVol\">Volume: </label>";
+  s+="    <p><input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="            step=\"1\" class=\"slider\"></p>";
+  s+="    <label for=\"buttonOn\">Power On:</label>";
+  s+="    <input type=\"button\" onchange=\"updateButtonOn(this)\" id=\"buttonOn\" value=\"On-Off\"";
+  s+="";
+  s+="";
   s+="    <script>";
   s+="        function updateSliderBr(element) {";
   s+="            var sliderValueBr = document.getElementById(\"sliderBr\").value;";
@@ -172,6 +178,13 @@ String index_html(){
   s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
   s+="            xhr.send();";
   s+="        }";
+  
+  s+="        function updateButtonOn(element){";
+  s+="            console.log(\"PowerButton\");";
+  s+="            var xhr = new XMLHttpRequest();";
+  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
+  s+="            xhr.send();";
+  s+="            }";
   s+="    </script>";
   s+="</body>";
   s+="";
