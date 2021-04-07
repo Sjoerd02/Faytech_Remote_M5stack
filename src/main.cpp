@@ -33,7 +33,9 @@ boolean newData = false;
 const int output = 2;
 String sliderValue = "0";
 String param="";
+boolean btnOnOff = false;
 const char *PARAM_INPUT = "value";
+
 
 
 boolean restoreConfig() {
@@ -151,13 +153,15 @@ String index_html(){
   s+="    <h2>FayTech Remote</h2>";
   s+="    <p><span id=\"textSliderValue\">%SLIDERVALUE%</span></p>";
   s+="    <label for=\"sliderBr\">Brightness: </label>";
-  s+="    <p><input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
-  s+="            step=\"1\" class=\"slider\"></p>";
+  s+="    <input type=\"range\" onchange=\"updateSliderBr(this)\" id=\"sliderBr\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="            step=\"1\" class=\"slider\">";
   s+="    <label for=\"sliderVol\">Volume: </label>";
-  s+="    <p><input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
-  s+="            step=\"1\" class=\"slider\"></p>";
+  s+="    <input type=\"range\" onchange=\"updateSliderVol(this)\" id=\"sliderVol\" min=\"0\" max=\"10\" value=\"%SLIDERVALUE%\"";
+  s+="            step=\"1\" class=\"slider\">";
   s+="    <label for=\"buttonOn\">Power On:</label>";
-  s+="    <input type=\"button\" onchange=\"updateButtonOn(this)\" id=\"buttonOn\" value=\"On-Off\"";
+  s+="    <input type=\"button\" onclick=\"updateButtonOn(this)\" id=\"buttonOn\" value=\"On\">";
+  s+="    <label for=\"buttonOff\">Power Off:</label>";
+  s+="    <input type=\"button\" onclick=\"updateButtonOn(this)\" id=\"buttonOff\" value=\"Off\">";
   s+="";
   s+="";
   s+="    <script>";
@@ -178,11 +182,12 @@ String index_html(){
   s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
   s+="            xhr.send();";
   s+="        }";
-  
+
   s+="        function updateButtonOn(element){";
-  s+="            console.log(\"PowerButton\");";
+  s+="            var buttonOnOff = element.value;";
+  s+="            console.log(\"PowerButton\" + buttonOnOff);";
   s+="            var xhr = new XMLHttpRequest();";
-  s+="            xhr.open(\"GET\", \"/slider?value=\" + sliderValueVol + \"&param=volume\", true);";
+  s+="            xhr.open(\"GET\", \"/button?value=\" + buttonOnOff, true);";
   s+="            xhr.send();";
   s+="            }";
   s+="    </script>";
@@ -285,6 +290,18 @@ void startWebServer() {
       String s = "<h1>STA mode</h1><p><a href=\"/reset\">Reset Wi-Fi Settings</a></p>";
       //webServer.send(200, "text/html", makePage("STA mode", s));
       webServer.send(200, "text/html", index_html());     
+    });
+    
+    webServer.on("/button", []() {
+      M5.Lcd.println("web:on button " + webServer.arg("param") + " : " + urlDecode(webServer.arg("value")));
+      if(webServer.arg("value")=="On")
+      {
+          byte message[] = {0x69, 0xFF, 0x00};
+          Serial.write(message, sizeof(message));
+      }else if(webServer.arg("value")=="Off"){
+          byte message[] = {0x69, 0x76, 0x00};
+          Serial.write(message, sizeof(message));
+      }    
     });
 
     webServer.on("/slider", []() {
